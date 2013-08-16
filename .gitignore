@@ -13,9 +13,9 @@ node_modules/*
 bower_components/*
 build/*
 .c9revisions/*
-.secrets/*
-!.secrets/*.example
-!.secrets/Secrets.php
+secrets/*
+!secrets/*.example
+!secrets/Secrets.php
 
 #################
 ## Eclipse
