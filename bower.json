@@ -1,0 +1,7 @@
+{
+  "name": "snapsearch",
+  "version": "0.0.0",
+  "dependencies": {
+    "jquery": "git://github.com/components/jquery.git#~2.0.3"
+  }
+}
