@@ -8,19 +8,75 @@
 
 /* Custome styles */
 
+body {
+	font-family: source_sans_proregular;
+}
+
 /* Adding padding to the top of each Div in the Container Div inside the Main Div - to prevent the Navbar from hiding the top contents inside each div*/
 .main{
-	.panel {
+	.panels {
 			padding-top: 40px;
-			margin-bottom: -40px;
+			padding-bottom: 40px;
+			background-image: url("../images/square_bg.png");
+			background-repeat: repeat;
 	}
+	#home {
+		background-color: #3e7dbb;
+		.panel_body {
+			font-size: 38px;
+			color: #0d1d2d;
+			padding-top: 80px;
+		}
+	}
+	
+	#js_seo {
+		background-color: #71be52;
+
+		.panel_body {
+			font-size: 34px;
+			/*color: #28451c; */ 
+			color: #4f723f;
+			padding-top: 40px;
+		}	
+	}	
+	
+	#how_it_works {
+		background-color: #f8f8f8;
+	}
+
+	#pricing {
+		background-color: #eec018;
+	}	
+
+	#about {
+		background-color: #3e7ebc;
+	}	
+}
+
+ 
+
+/**
+ * All Table override styles
+ */
+
+tbody td {
+	background-color: #FFFFFF;
 }
 
 
-
 /* Overriding Bootstrap default alignment for table headers on the pricing table */
-.pricing th {
+#pricing th {
 	text-align: center;
+	background-color: #DDDDDD;
+}
+
+#pricing .first_row {
+	background-color: #EEEEEE;
+
+}
+
+#pricing tfoot {
+	background-color: #DDDDDD;
 }
 
 	/* -- Footer Styles -- */

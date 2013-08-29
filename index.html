@@ -25,7 +25,7 @@
     </head>
     <body data-spy="scroll" data-target="#main_nav">
         <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+            <p class="chromeframe">You are using an <em>outdated</em> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
         <header>
@@ -61,44 +61,75 @@
         </header>
 
         <div class="main">
-            <section id="home" class="panel row">
-                <h1 class="panel_header">Home</h1>
-                <div class="panel_body col-md-6">
+            <section id="home" class="panels row">
+            <article class="container">
+                <div class="panel_body col-md-8">
                     <p>
                         Are you building an HTML5 Application?
-                        <br />
-                        Search Engines currently cannot crawl your content.
-                        <br />
+                        <br /> 
+                        Search Engines currently <em>cannot</em> crawl your content.
+                        <br /><br />
                         SnapSearch changes that!
                     </p>
                 </div>
-                <figure class="chrome_image col-md-6">
+                <figure class="chrome_image col-md-4">
                     <img src="images/google_search_no_results.png" alt="Images showing no results in a google search" />
                 </figure>
+              </article>      
             </section>
 
-            <section id="js_seo" class="panel row">
-                <h1 class="panel_header">JS SEO</h1>
-                <div class="panel_body col-md-6">
+            <section id="js_seo" class="panels row">
+            <article class="container">
+                <h1 class="panel_header">Index your website content</h1>
+                <div class="panel_body col-md-8">
                     <p>
-                         Aliquam sodales dapibus tellus pellentesque tempor. Duis non lobortis nisl. Morbi dapibus eget leo nec imperdiet. Suspendisse ultrices tristique eros; elementum suscipit ante vestibulum eget? Pellentesque id tortor id arcu volutpat ultricies! 
-                        <br />
-                        In adipiscing non orci eu rutrum. Vestibulum non tempor eros. Proin tincidunt faucibus diam, eu dictum nunc. Integer ut diam tincidunt, laoreet lacus ac, commodo felis. Sed in lectus molestie lectus sagittis posuere ut non dui. Mauris rutrum vestibulum semper. Sed tempor ultricies aliquet.
+                         SnapSearch will let your single web page application be indexed by any search engine, and crawled by any robot including browsers that don’t even run javascript.
+                        <br /><br />
+                        So you can freely use your favourite JavaScript framework to build your modern web app and be sure that your users can find your site.
                     </p>
                 </div>
-                <figure class="chrome_image col-md-6">
-                    <img src="images/google_search_no_results.png" alt="Images showing no results in a google search" />
+                <figure class="chrome_image col-md-4">
+                    <img src="images/js_frameworks.png" alt="Images showing different JS frameworks" />
                 </figure>
+            </article>    
             </section>
-            <section id="how_it_works" class="panel row">
+            <section id="how_it_works" class="panels row">
+            <article class="container">
                 <h1 class="panel_header">How it Works</h1>
-                <p>
-                    Aliquam sodales dapibus tellus pellentesque tempor. Duis non lobortis nisl. Morbi dapibus eget leo nec imperdiet. Suspendisse ultrices tristique eros; elementum suscipit ante vestibulum eget? Pellentesque id tortor id arcu volutpat ultricies! 
-                    <br />
-                    In adipiscing non orci eu rutrum. Vestibulum non tempor eros. Proin tincidunt faucibus diam, eu dictum nunc. Integer ut diam tincidunt, laoreet lacus ac, commodo felis. Sed in lectus molestie lectus sagittis posuere ut non dui. Mauris rutrum vestibulum semper. Sed tempor ultricies aliquet.
-                </p>
+                <div class="col-md-7">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                            <tr><th>
+                                <ul class="list-inline">
+                                    <li>PHP</li>
+                                    <li>Ruby</li>
+                                    <li>Python</li>
+                                </ul>
+                            </th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="3">Free</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-5">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th><input type="url" id="website_url" class="form-control" placeholder="http://your-url"/> </th>
+                                <th><button type="button" class="btn btn-primary btn-sm">Submit</button></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="2">Free</td></tr>
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </article>    
             </section>
-            <section id="pricing" class="panel row">
+            <section id="pricing" class="panels row">
+            <article class="container">
                 <h1 class="panel_header">Pricing</h1>
                 <div class="col-sm-3">
                     <table class="table table-bordered text-center">
@@ -106,7 +137,7 @@
                             <tr><th>Free Pack</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Free</td></tr>
+                            <tr><td class="first_row">Free</td></tr>
                             <tr><td>Limits</td></tr>
                         </tbody>
                         <tfoot>
@@ -120,7 +151,7 @@
                             <tr><th>Basic Pack</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>$$/Month</td></tr>
+                            <tr><td class="first_row">$$/Month</td></tr>
                             <tr><td>Limits</td></tr>
                         </tbody>
                         <tfoot>
@@ -134,7 +165,7 @@
                             <tr><th>Silver Pack</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>$$/Month</td></tr>
+                            <tr><td class="first_row">$$/Month</td></tr>
                             <tr><td>Limits</td></tr>
                         </tbody>
                         <tfoot>
@@ -148,7 +179,7 @@
                             <tr><th>Gold Pack</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>$$/Month</td></tr>
+                            <tr><td class="first_row">$$/Month</td></tr>
                             <tr><td>Limits</td></tr>
                         </tbody>
                         <tfoot>
@@ -156,9 +187,19 @@
                         </tfoot>
                     </table>
                 </div>
+            </article>  
             </section>
-            <section id="about" class="panel row">
+            <section id="about" class="panels row">
+            <article class="container">
                 <h1 class="panel_header">About</h1>
+                <div class="panel_body">
+                     <p>
+                         Aliquam sodales dapibus tellus pellentesque tempor. Duis non lobortis nisl. Morbi dapibus eget leo nec imperdiet. Suspendisse ultrices tristique eros; elementum suscipit ante vestibulum eget? Pellentesque id tortor id arcu volutpat ultricies! 
+                        <br />
+                        In adipiscing non orci eu rutrum. Vestibulum non tempor eros. Proin tincidunt faucibus diam, eu dictum nunc. Integer ut diam tincidunt, laoreet lacus ac, commodo felis. Sed in lectus molestie lectus sagittis posuere ut non dui. Mauris rutrum vestibulum semper. Sed tempor ultricies aliquet.
+                    </p>  
+                </div>
+            </article>    
             </section>
         </div>
 
