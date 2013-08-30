@@ -3,11 +3,12 @@
 
 # TEAM
 
-    <name> -- <role> -- <twitter>
+    Mustafa Sharara -- Developer
+    
 
 # THANKS
 
-    <name>
+    Roger Qiu -- Developer
 
 # TECHNOLOGY COLOPHON
 

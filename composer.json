@@ -1,0 +1,15 @@
+{
+	"require":{
+		"pimple/pimple": "1.0.2",
+		"jamierumbelow/pigeon": "0.2.0",
+		"polycademy/citemplating": "1.0.7",
+		"polycademy/polyauth": "*"
+	},
+	"require-dev":{
+		"firephp/firephp-core": "0.4.0",
+		"codeception/codeception": "1.6.6"
+	},
+	"config":{
+		"bin-dir": "bin/"
+	}
+}

@@ -264,6 +264,17 @@ switch (ENVIRONMENT)
 
 	define('VIEWPATH', $view_folder);
 
+
+/*
+ * --------------------------------------------------------------------
+ * Secrets
+ * --------------------------------------------------------------------
+ *
+ * We will load secrets into application
+ */
+require_once('Secrets.php');
+Secrets::load();
+
 /*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE

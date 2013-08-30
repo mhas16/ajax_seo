@@ -1,18 +1,30 @@
 #################
 ## Custom
 #################
-
+# Codeigniter
 */config/development
 */logs/log-*.php
 */logs/!index.html
 */cache/*
 */cache/!index.html
+
+#Composer
 vendor/*
 bin/*
+
+#npm
 node_modules/*
+
+#Bower
 bower_components/*
+
+#Grunt
 build/*
+
+#Cloud9
 .c9revisions/*
+
+#Secrets folder
 secrets/*
 !secrets/*.example
 !secrets/Secrets.php
