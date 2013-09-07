@@ -1,0 +1,19 @@
+{
+  "name": "ajax_seo",
+  "version": "0.0.1",
+  "description": "SEO for Ajax driven apps",
+  "author": "Mustafa Sharara <mustafa@sharara.co.uk>",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-concat": "~0.2.0",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-text-replace": "~0.3.2",
+    "grunt-shell": "~0.2.2",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-cssmin": "~0.6.1",
+    "grunt-release-branch": "~0.1.1",
+    "grunt-contrib-compress": "~0.5.2"
+  }
+}

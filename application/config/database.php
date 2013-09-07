@@ -79,27 +79,38 @@
 $active_group = 'default';
 $query_builder = TRUE;
 
-$db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => '',
-	'password' => '',
-	'database' => '',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => TRUE,
-	'db_debug' => TRUE,
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'autoinit' => TRUE,
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array()
-);
+if (ENVIRONMENT == 'development') {
+
+	$database_name = 'snapsearch';
+
+	$db['default'] = array(
+		'dsn'	=> 'mysql:host=localhost;dbname=' . $database_name,
+		'hostname' => 'localhost',
+		'username' => 'root',
+		'password' => 'mysqlroot',
+		'database' => $database_name,
+		'dbdriver' => 'pdo',
+		'dbprefix' => '',
+		'pconnect' => TRUE,
+		'db_debug' => TRUE, // Set this to false in production
+		'cache_on' => FALSE,
+		'cachedir' => '',
+		'char_set' => 'utf8',
+		'dbcollat' => 'utf8_general_ci',
+		'swap_pre' => '',
+		'autoinit' => TRUE,
+		'encrypt' => FALSE,
+		'compress' => FALSE,
+		'stricton' => FALSE,
+		'failover' => array(),
+		// 'port'		=> 1234
+	);
+	
+}elseif (ENVIRONMENT == 'production') {
+	
+}
+
+
 
 /* End of file database.php */
 /* Location: ./application/config/database.php */

@@ -109,6 +109,16 @@ define('EXIT_DATABASE', 8); // database error
 define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
  
+ /*
+|--------------------------------------------------------------------------
+| For Sparks and Legacy Codeigniter Libraries
+|--------------------------------------------------------------------------
+|
+| Some older libraries and spark libraries require the use of EXT constant, EXT has been deprecated in Codeigniter, so we need to add it in manually
+|
+*/
+define('EXT', '.php');
+
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
