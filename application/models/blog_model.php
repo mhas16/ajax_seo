@@ -38,8 +38,10 @@ class Blog_model extends CI_Model {
 	 */
 	public function create($input_data) {
 
-		$data = elements(array('title', 'content', 'authorId'), $input_data, null);
+		$data = elements(array('title', 'content', 'authorId'), $input_data, null, true);
 		$data['date'] = date('Y-m-d H:i:s');
+
+		$this->validator->set_data($data);
 
 		$this->validator->set_rules(array(
 			array(
@@ -58,8 +60,6 @@ class Blog_model extends CI_Model {
 				'rules'	=> 'required|trim|is_natural_no_zero'
 			)
 		));
-
-		$this->validator->set_data($data);
 
 		if ($this->validator->run() == false) {
 			$this->errors = array(
@@ -107,7 +107,7 @@ class Blog_model extends CI_Model {
 			$data = array(
 				'id'			=> $row->id,
 				'title'			=> $row->title,
-				'permalink'		=> url_title($row->title, '_'),
+				'permalink'		=> strtolower(url_title($row->title, '_')),
 				'content'		=> $row->content,
 				'contentParsed'	=> $this->parse_markdown($row->content),
 				'date'			=> $row->date,
@@ -141,7 +141,7 @@ class Blog_model extends CI_Model {
 				$data[] = array(
 					'id'			=> $row->id,
 					'title'			=> $row->title,
-					'permalink'		=> url_title($row->title, '_'),
+					'permalink'		=> strtolower(url_title($row->title, '_')),
 					'content'		=> $row->content,
 					'contentParsed'	=> $this->parse_markdown($row->content),
 					'date'			=> $row->date,
@@ -163,7 +163,9 @@ class Blog_model extends CI_Model {
 
 	public function update($id, $input_data) {
 
-		$data = elements(array('title', 'content', 'authorId'), $input_data, null);
+		$data = elements(array('title', 'content', 'authorId'), $input_data, null, true);
+		
+		$this->validator->set_data($data);
 
 		$this->validator->set_rules(array(
 			array(
@@ -183,9 +185,9 @@ class Blog_model extends CI_Model {
 			)
 		));
 
-		if ($this->validator->run() == false){
+		if ($this->validator->run() == false) {
 			$this->errors = array(
-				'validation_error'	=> $this->validator->error_array();
+				'validation_error'	=> $this->validator->error_array(),
 			);
 			return false;
 		}

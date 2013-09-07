@@ -123,7 +123,8 @@ class Blog extends CI_Controller {
 
 	public function update($id) {
 
-		$data = $this->input->json(false, true);
+		$data = $this->input->json(false);
+		
 		$query = $this->Blog_model->update($id, $data);
 
 		if ($query) {
