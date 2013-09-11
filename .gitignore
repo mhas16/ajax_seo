@@ -29,6 +29,9 @@ secrets/*
 !secrets/*.example
 !secrets/Secrets.php
 
+*.sublime-project
+*.sublime-workspace
+
 #################
 ## Eclipse
 #################

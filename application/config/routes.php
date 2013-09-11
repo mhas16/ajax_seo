@@ -7,7 +7,8 @@ Pigeon::map(function($r){
 		$r->resources('blog');
 		$r->resource('v1/robot');
 		
-		$r->route('test', 'test/index');	
+		$r->route('test', 'test/index');
+		$r->route('test/twitter_test', 'test/twitter_test');	
 
 	});
 

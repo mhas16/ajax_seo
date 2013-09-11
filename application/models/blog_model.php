@@ -8,6 +8,7 @@ use Michelf\MarkdownExtra;
 
 class Blog_model extends CI_Model {
 	
+	// Declaring the $markdown_parser variable for Markdown
 	protected $markdown_parser;
 
 	// Declaring the $errors variable
@@ -18,8 +19,8 @@ class Blog_model extends CI_Model {
 	public function __construct() {
 		
 		parent::__construct();
-		// All of the following methods needs validation to be done!!
 		
+		// Instantiating the Markdown object
 		$this->markdown_parser = new MarkdownExtra();
 
 		// Loading the validation library - Adding alias to it
