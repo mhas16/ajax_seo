@@ -32,6 +32,8 @@ secrets/*
 *.sublime-project
 *.sublime-workspace
 
+nbproject/*
+
 #################
 ## Eclipse
 #################
@@ -247,3 +249,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+.htaccess

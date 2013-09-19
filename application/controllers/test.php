@@ -24,4 +24,42 @@ class Test extends CI_Controller{
 
 	}
 
+	public function test_shell(){
+		$descriptor_spec = array(
+
+			1 => array('pipe', 'w'),
+			2 => array('pipe', 'w'),
+
+			);
+
+		$cmd = 'traceroute -m 2 polycademy.com';
+
+		$process = proc_open($cmd, $descriptor_spec, $pipes);
+
+		if(is_resource($process)){
+
+			while (!feof($pipes[1])){
+
+				$output = fgets($pipes[1]);
+				echo $output;
+				ob_flush();
+				flush();
+
+			} 
+
+			fclose($pipes[1]);
+
+			$errors = stream_get_contents($pipes[2]);
+
+			fclose($pipes[2]);
+
+			$exit_code = proc_close($process);
+
+			echo $exit_code;
+			
+		}
+
+		
+	}
+
 }
