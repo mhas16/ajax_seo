@@ -96,7 +96,8 @@ class Blog extends CI_Controller {
 
 			//	capturing the value of the array element (Error message)
 			$content = current($this->Blog_model->get_errors());
-			//	capturing the key of the of the element to get the type of error (error, system_error, etc...)
+
+			//	capturing the key of the of the element to get the type of error (error, system_error, validation_error, etc...)
 			$code = key($this->Blog_model->get_errors());
 
 			// Setting the Status header on the type of error

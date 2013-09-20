@@ -3,7 +3,11 @@
 use Michelf\MarkdownExtra;
 
 /**
- *	This is the blog model class that is responsible for the data to and from the Blog database table 
+ *	This is the blog model class that is responsible for the data to and from the Blog database table
+ * 	Extra clases or libraries used; 
+ * 		Helpers: Array,  
+ *		Libraries: Form Validation,
+ *		
  */
 
 class Blog_model extends CI_Model {
@@ -35,12 +39,24 @@ class Blog_model extends CI_Model {
 
 	/**
 	 *  Defining the create() method
-	 * 	Accepts $data as an Array
+	 * 	Accepts $input_data as an Array
+	 * 	Proccessing: Filters, validates, and inserts the input ot DB
+	 *	Returns; 	if successfull: 	ID of the inserted row
+	 *				if not succesfull: 	false (for validation or DB access)
 	 */
 	public function create($input_data) {
 
+		// Data Filtering //
+
+		// Using the elements method of the Array helper to make sure we get the required data
+		// Note: Using our custom Array Helper elements() method (MY_array_helper.php) ***
 		$data = elements(array('title', 'content', 'authorId'), $input_data, null, true);
+
+		// Setting the date to the current date of creation
 		$data['date'] = date('Y-m-d H:i:s');
+
+
+		// Data Validations // ***
 
 		$this->validator->set_data($data);
 
@@ -66,10 +82,14 @@ class Blog_model extends CI_Model {
 			$this->errors = array(
 				'validation_error'	=> $this->validator->error_array(),
 			);
+
 			return false;
 		}
 
-		// Calling the insert() method of the db class to insert the data recived from the controller into the table
+
+		// Database Access //
+
+		// Calling the insert() method of the db class to insert the data recived from the controller after (filtering and validation) into the table
 		$query = $this->db->insert('blog', $data);
 
 		// Checking the result of the query
@@ -80,10 +100,10 @@ class Blog_model extends CI_Model {
 			$num = $this->db->error()['code'];
 			$last_query = $this->db->last_query();
 
-			//	Logging the error to the ??? ---v
-			log_message('error', "Problem inserting into Blogs table $msg ($num) using this query: $last_query");
+			//	Logging the error to the ??? ***
+			log_message('error', "Problem inserting into Blogs table: $msg ($num) using this query: $last_query");
 
-			//	Preparing an error message to be desplayed for the users
+			//	Preparing an error message to be displayed for the users
 			$this->errors = array(
 				'system_error' => 'Problem inserting new blog post.'
 			);
