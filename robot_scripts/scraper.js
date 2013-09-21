@@ -49,25 +49,35 @@ try {
 	// Loading the page and executing the function on the onLoadFinished event
 	page.open(config.url, function(status){
 		if(status === 'success'){
-			
-			// Setting a timeout of 100 ms
-			window.setTimeout(function(){
-				// rendering the loaded page base64 format
-				var screenshot = page.renderBase64('png');
 
-				var html = page.evaluate(function(){
-					return document.all[0].outerHTML;
-				});
+			var screenshot, html;
 
-				outputData({
-					screenshot: screenshot,
-					html: html,
-					date: Math.floor(Date.now()/1000) //convert to unix timestamp and round to highest seconds
-				});
+			page.injectJs('ajax_tracker.js');
 
+			page.evaluate(function(){
 
-				phantom.exit();
-			}, 100);
+				var checkAjaxRequests = function(){
+					setTimeout(function(){
+						if (_ss_ajax_tracker.checkAjax()){
+							screenshot = page.renderBase64('png');
+							html = document.all[0].outerHTML;
+						}else{
+							checkAjaxRequests();
+						}
+					}, 500);
+				};
+
+				checkAjaxRequests();
+
+			});
+
+			outputData({
+				screenshot: screenshot,
+				html: html,
+				date: Math.floor(Date.now()/1000) //convert to unix timestamp and round to highest seconds
+			});
+
+			phantom.exit();
 
 		}else{
 			console.log('Failed Loading!');
