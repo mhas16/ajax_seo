@@ -2,11 +2,13 @@
 
 try {
 
+	//Setting the default values
 	var config = {
 		url: '',
-		width: '1024',
+		width: '3000',
 		height: '800'
 	};
+
 
 	var args = require('system').args;
 
@@ -32,9 +34,13 @@ try {
 
 	});
 
+	var fs = require('fs');
+
 	// Outputing the data back to the Node process - NOTE: Needs further work
 	var outputData = function(output){
-		console.log(JSON.stringify(output));
+		// console.log(JSON.stringify(output));
+		fs.write('log.txt', output.html, 'w');
+		fs.write('imagelog.txt', output.screenshot, 'w');
 	};
 
 	// Creating the page object representing the API to manipulate the page.
@@ -46,38 +52,96 @@ try {
 		height: config.height
 	};
 
+
+	var requests = [];
+	var requestsComplete;
+
+	//This callback will be executed at least once, due to the initial request to the domain. 
+	page.onResourceRequested = function(resource){
+		
+		
+		requests.push(resource.id);
+		requestsComplete = false;
+		console.log(JSON.stringify(resource));
+	};
+
+	page.onResourceReceived = function(resource){
+		var index = requests.indexOf(resource.id);
+		if (index != -1) {
+			requests.splice(index, 1);
+		}
+		if(requests.length == 0){
+			requestsComplete = true;
+		}
+	};
+
+	page.onResourceError = function(resource){
+		var index = requests.indexOf(resource.id);
+		if (index != -1) {
+			requests.splice(index, 1);
+		}
+		if(requests.length == 0){
+			requestsComplete = true;
+		}
+	};
+
+	page.onError = function(msg){
+		console.log(msg);
+	};
+
+	page.onAlert = function(msg){
+		console.log(msg);
+	};
+
+	page.onConsoleMessage = function(msg){
+		console.log(msg);
+	};
+
+	page.settings.loadImages = true;
+	page.settings.localToRemoteUrlAccessEnabled = true;
+	page.settings.userAgent = 'SnapSearch';
+	page.settings.webSecurityEnabled = false;
+
 	// Loading the page and executing the function on the onLoadFinished event
 	page.open(config.url, function(status){
 		if(status === 'success'){
 
-			var screenshot, html;
+			var evaluateOutput = function(){
 
-			page.injectJs('ajax_tracker.js');
+				var screenshot = page.renderBase64('png');
 
-			page.evaluate(function(){
+				page.render('screen.png');
 
-				var checkAjaxRequests = function(){
-					setTimeout(function(){
-						if (_ss_ajax_tracker.checkAjax()){
-							screenshot = page.renderBase64('png');
-							html = document.all[0].outerHTML;
-						}else{
-							checkAjaxRequests();
-						}
-					}, 500);
-				};
+				page.evaluate(function(){
+					document.body.style.backgroundColor = '#FFFFFF';
+				});
+				var html = page.evaluate(function(){
+					return document.all[0].outerHTML;
+				});
 
-				checkAjaxRequests();
+				outputData({
+					screenshot: screenshot,
+					html: html,
+					date: Math.floor(Date.now()/1000) //convert to unix timestamp and round to highest seconds
+				});
 
-			});
+				phantom.exit();
 
-			outputData({
-				screenshot: screenshot,
-				html: html,
-				date: Math.floor(Date.now()/1000) //convert to unix timestamp and round to highest seconds
-			});
+			};
 
-			phantom.exit();
+			var checkResourceRequests = function(){
+				setTimeout(function(){
+					if(requestsComplete){
+						evaluateOutput();
+					}else{
+						checkResourceRequests();	
+					}
+				}, 500);
+			};
+
+			//Calling the recursive timeout func
+			checkResourceRequests();
+			
 
 		}else{
 			console.log('Failed Loading!');
@@ -88,6 +152,8 @@ try {
 } catch(e) {
 
 	console.log(e.name + ': ' + e.message);
+
+	//Making sure that we dont have any zombie process
 	phantom.exit();
 
 }

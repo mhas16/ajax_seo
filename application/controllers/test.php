@@ -8,6 +8,7 @@ class Test extends CI_Controller{
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('Twitter_model');
+		$this->load->model('Robot_model');
 	}
 
 	public function index() {
@@ -62,75 +63,13 @@ class Test extends CI_Controller{
 		
 	}
 
+	public function test_robot(){
+		$data = array(
+			'url'	=> 'http://google.com',
+		);
 
-	public function test_js() {
-		echo '
+		var_dump($this->Robot_model->create($data));
+	}
 
-			<html>
-				<head>
-					<title>Test of inline script</title>
-					<script>
-
-						var requests = [];
-
-						var oldOpen = XMLHttpRequest.prototype.open;
-						XMLHttpRequest.prototype.open = function(){
-							
-							this.addEventListener("loadstart", function(event){
-								requests.push(event.target);
-							}, false);
-
-							this.addEventListener("loadend", function(event){
-
-								for( var i = requests.length - 1; i >= 0; i-- ){
-									if( requests[i] === event.target ){
-										requests.splice(i, 1);
-									}
-								}
-
-							}, false);
-
-							oldOpen.apply(this, arguments);
-						};
-
-						setTimeout(function(){
-
-							var checkAjaxRequests = function(){
-								setTimeout(function(){
-									if (requests.length === 0){
-										console.log("All AJAX requests finished.");
-										//pass through to next operation
-									}else{
-										checkAjaxRequests();
-									}
-								}, 500);
-							};
-
-							checkAjaxRequests();
-
-						}, 1000);
-
-
-
-
-
-
-						var xhr1 = new XMLHttpRequest();
-						xhr1.open("get", "../blog/26");
-						xhr1.send();
-
-						var xhr2 = new XMLHttpRequest();
-						xhr2.open("get", "../blog/15");
-						xhr2.send();
-
-
-					</script>
-				</head>
-				<body>
-				</body>
-			</html>
-
-		';
-	} 
 
 }
