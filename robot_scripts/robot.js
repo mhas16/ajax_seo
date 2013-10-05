@@ -3,20 +3,6 @@ var fs = require('fs'),
 	page = require('webpage').create(),
 	server = require('webserver').create();
 
-phantom.onError = function (msg, stack) {
-	var msg = "\nScript Error: "+msg+"\n";
-	if (stack && stack.length) {
-		msg += "       Stack:\n";
-		stack.forEach(function(t) {
-			msg += '         -> ' + (t.file || t.sourceURL) + ': ' + t.line + (t.function ? ' (in function ' + t.function + ')' : '')+"\n";
-		})
-	}
-
-	fs.write('log.txt', msg + "\n", 'a');
-
-	phantom.exit();
-}
-
 var defaultConfig = {
 	ipaddress: '127.0.0.1',
 	port: 8989,
@@ -26,7 +12,8 @@ var defaultConfig = {
 	useragent: 'SnapSearch',
 	loadimages: true,
 	javascriptenabled: true,
-	maxtimeout: 5000
+	maxtimeout: 5000,
+	logfile: 'log.txt' // Log file is recorded in the current working directory of where you started the web server, it is not the same as this script's path
 };
 
 var args = system.args;
@@ -55,19 +42,21 @@ args.forEach(function(value, index){
 	if (key === 'loadimages') defaultConfig.loadimages = propValue;
 	if (key === 'javascriptenabled') defaultConfig.javascriptenabled = propValue;
 	if (key === 'maxtimeout') defaultConfig.maxtimeout = propValue;
+	if (key === 'logfile') defaultConfig.logfile = propValue;
 
 });
+
+var logError = function(exception){
+	var msg = exception.message + ' - ' + exception.fileName + ' - ' + exception.lineNumber + ' - ' + (new Date()).toString();
+	console.log('Error: ' + msg);
+	fs.write(defaultConfig.logfile, msg + "\n", 'a');
+};
 
 /**
 	** Creating the webserver object **
 **/
 
 var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, function(request, response){
-
-	console.log('Slimerjs Server started at: ' + defaultConfig.ipaddress + ':' + defaultConfig.port);	
-
-	var input = request.post;
-	input = JSON.parse(input);
 
 	/*
 		{
@@ -86,14 +75,21 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 	// support cliprect
 	// support dom mutation for animation
 
+	try{
+		var input = String.trim(request.post);
+		input = JSON.parse(input);
+	}catch(e){
+		logError(e);
+	}
+
 	// Adding the properties of the input object to the defaultConfig object
 	for (var key in input) {
 		defaultConfig[key] = input[key];
 	}
 
 	page.viewportSize = {
-		width: 1024,
-		height: 768
+		width: defaultConfig.width,
+		height: defaultConfig.height
 	};
 
 	page.settings.userAgent = defaultConfig.useragent;
@@ -110,7 +106,7 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
         	if (main && newUrl != url && newUrl.replace(/\/$/,"") != url && (type == "Other" || type == "Undefined")){
         		redirectUrl = newUrl;
         	}
-        };		
+        };
 
 		//This callback will be executed at least once, due to the initial request to the domain. 
 		page.onResourceRequested = function(resource){
@@ -121,7 +117,7 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 
 		page.onResourceReceived = function(resource){
 
-			if (response.stage == 'end'){
+			if (resource.stage == 'end'){
 
 				var index = requests.indexOf(resource.id);
 				if (index != -1) {
@@ -235,8 +231,10 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 	beginExtraction(defaultConfig.url);
 
 });	
-	
-if (!service){
+
+if (service){
+	console.log('Slimerjs Server started at: ' + defaultConfig.ipaddress + ':' + defaultConfig.port);
+}else{
 	console.log('Unable to start webserver on ' + defaultConfig.ipaddress + ':' + defaultConfig.port);
 	phantom.exit();
 }
