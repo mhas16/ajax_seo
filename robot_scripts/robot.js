@@ -48,15 +48,60 @@ args.forEach(function(value, index){
 
 var logError = function(exception){
 	var msg = exception.message + ' - ' + exception.fileName + ' - ' + exception.lineNumber + ' - ' + (new Date()).toString();
-	console.log('Error: ' + msg);
+	console.log('Robot hit an error: ' + msg);
 	fs.write(defaultConfig.logfile, msg + "\n", 'a');
 };
+
+var busy = false;
 
 /**
 	** Creating the webserver object **
 **/
 
 var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, function(request, response){
+
+	var outputData  = function(message, html, screenshot, code){
+
+		console.log('Robot is giving back data');
+
+		response.statusCode = code;
+
+		var payload = {
+
+			message: message,
+			html: html,
+			screenshot: screenshot,
+			date: Math.floor(Date.now()/1000),
+
+		};
+
+		payload = JSON.stringify(payload);
+
+		response.headers = {
+			'Cache' : 'no-cache',
+			'Content-Type' : 'application/json',
+			'Content-Length' : payload.length
+		};
+		
+		try{
+			
+			response.write(payload);
+
+			response.closeGracefully();
+
+		}catch(e){
+
+			console.log(e.message);
+
+
+		}
+
+	};
+
+	if(busy){
+		console.log('Robot is busy and cannot process this task');
+		outputData('Robot is busy', '', '', 429);
+	}
 
 	/*
 		{
@@ -72,8 +117,15 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 		}
 	*/
 
+	//maxtimeout
 	// support cliprect
 	// support dom mutation for animation
+
+	console.log('Robot is running a task');
+
+	busy = true;
+
+	var currentConfig = JSON.parse(JSON.stringify(defaultConfig));
 
 	try{
 		var input = String.trim(request.post);
@@ -82,43 +134,55 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 		logError(e);
 	}
 
-	// Adding the properties of the input object to the defaultConfig object
+	// Adding the properties of the input object to the currentConfig object
 	for (var key in input) {
-		defaultConfig[key] = input[key];
+		currentConfig[key] = input[key];
 	}
 
 	page.viewportSize = {
-		width: defaultConfig.width,
-		height: defaultConfig.height
+		width: currentConfig.width,
+		height: currentConfig.height
 	};
 
-	page.settings.userAgent = defaultConfig.useragent;
-	page.settings.loadImages = defaultConfig.loadimages;
-	page.settings.javascriptEnabled = defaultConfig.javascriptenabled;
+	page.settings.userAgent = currentConfig.useragent;
+	page.settings.loadImages = currentConfig.loadimages;
+	page.settings.javascriptEnabled = currentConfig.javascriptenabled;
 
-	var beginExtraction = function(url){
+	var requestPage = function(url){
 
 		var requests = [];
 		var requestsComplete;
 		var redirectUrl = false;
 
-		page.onNavigationRequested = function(newUrl, type, willNavigate, main) {
-        	if (main && newUrl != url && newUrl.replace(/\/$/,"") != url && (type == "Other" || type == "Undefined")){
-        		redirectUrl = newUrl;
-        	}
-        };
+		page.onClosing = function(){
 
-		//This callback will be executed at least once, due to the initial request to the domain. 
+			console.log('Robot has closed page');
+			busy = false;
+		
+		};
+
+		page.onNavigationRequested = function(newUrl, type, willNavigate, main){
+
+			console.log('Robot is navigating to: ' + newUrl);
+			if (main && newUrl != url && newUrl.replace(/\/$/,"") != url && (type == "Other" || type == "Undefined")){
+				redirectUrl = newUrl;
+			}
+
+		};
+
+		// This callback will be executed at least once, due to the initial request to the domain. 
 		page.onResourceRequested = function(resource){
 
+			console.log('Robot is requesting: ' + resource.url);
 			requests.push(resource.id);
 			requestsComplete = false;
+
 		};
 
 		page.onResourceReceived = function(resource){
 
+			console.log('Robot is receiving: ' + resource.url + ' at ' + resource.stage);
 			if (resource.stage == 'end'){
-
 				var index = requests.indexOf(resource.id);
 				if (index != -1) {
 					requests.splice(index, 1);
@@ -127,10 +191,12 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 					requestsComplete = true;
 				}
 			}
+
 		};
 
 		page.onResourceError = function(resource){
 
+			console.log('Robot could receive: ' + resource.url);
 			var index = requests.indexOf(resource.id);
 			if (index != -1) {
 				requests.splice(index, 1);
@@ -141,40 +207,19 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 
 		};
 
-		var outputData  = function(message, html, screenshot, code){
-
-			response.statusCode = code;
-
-			var payload = {
-
-				message: message,
-				html: html,
-				screenshot: screenshot,
-				date: Math.floor(Date.now()/1000),
-
-			};
-
-			payload = JSON.stringify(payload);
-
-			response.headers = {
-				'Cache' : 'no-cache',
-				'Content-Type' : 'application/json',
-				'Content-Length' : payload.length
-			};
-			
-			response.write(payload);
-			response.closeGracefully();
-
-		};
-
 		page.open(url).then(function(status){
 
-			if (redirectURL){
+			outputData('success', '', '', 200);
 
+			if (redirectUrl){
+
+				console.log('Robot is redirecting to ' + redirectUrl);
 				page.close();
-				beginExtraction(redirectUrl);
+				requestPage(redirectUrl);
 
-			}else if (status == "success") {
+			}else if(status == "success"){
+
+				console.log('Robot has loaded all synchronous requests');
 
 				// declaring the output data function that will be used after all requests are recie
 				var evaluateOutput = function(){
@@ -189,38 +234,56 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 
 					var screenshot = '';
 
-					if (defaultConfig.loadimages) {
-						screenshot = page.renderBase64(defaultConfig.imgformat);
+					if (currentConfig.loadimages) {
+						screenshot = page.renderBase64(currentConfig.imgformat);
 					}
 					
 					var html = page.evaluate(function(){
-						return document.all[0].outerHTML;
+						return document.documentElement.outerHTML;
 					});
+
+					outputData('Success', html, screenshot, 200);
 
 					page.close();
 
-					outputData('Succesfully loaded page.', html, screenshot, 200);
+					console.log('Robot has finished task');
 
 				};
 
+				outputData('Success', '', '', 200);
+
+
+				// var checkResourceRequests = function(){
+					
+				// 	if (requestsComplete){
+				// 		console.log('Robot loaded all asynchronous requests');
+				// 		evaluateOutput();
+				// 	}else{
+				// 		slimer.wait(500);
+				// 		checkResourceRequests();
+				// 	}
+
+				// };
 				// setting up a recursive function to check when the requestsComplete is true to start outputing data
-				var checkResourceRequests = function(){
-					setTimeout(function(){
-						if(requestsComplete){
-							evaluateOutput();
-						}else{
-							checkResourceRequests();	
-						}
-					}, 500);
-				};
+				// var checkResourceRequests = function(){
+				// 	setTimeout(function(){
+				// 		if(requestsComplete){
+				// 			console.log('Robot loaded all asynchronous requests');
+				// 			evaluateOutput();
+				// 		}else{
+				// 			checkResourceRequests();	
+				// 		}
+				// 	}, 500);
+				// };
 
-				//Calling the recursive timeout func at least once
-				checkResourceRequests();
+				// //Calling the recursive timeout func at least once
+				// checkResourceRequests();
 
 			}else{
 
+				console.log('Robot failed to open page');
+				outputData('Failure: ' + currentConfig.url, '', '', 400);
 				page.close();
-				outputData('Failed to load URL: ' + defaultConfig.url, '', '', 400);
 
 			}
 
@@ -228,9 +291,9 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 
 	};
 
-	beginExtraction(defaultConfig.url);
+	requestPage(currentConfig.url);
 
-});	
+});
 
 if (service){
 	console.log('Slimerjs Server started at: ' + defaultConfig.ipaddress + ':' + defaultConfig.port);
