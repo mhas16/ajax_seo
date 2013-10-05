@@ -77,6 +77,8 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 
 		payload = JSON.stringify(payload);
 
+		console.log(payload);
+
 		response.headers = {
 			'Cache' : 'no-cache',
 			'Content-Type' : 'application/json',
@@ -117,7 +119,7 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 		}
 	*/
 
-	//maxtimeout
+	// maxtimeout
 	// support cliprect
 	// support dom mutation for animation
 
@@ -173,7 +175,7 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 		// This callback will be executed at least once, due to the initial request to the domain. 
 		page.onResourceRequested = function(resource){
 
-			console.log('Robot is requesting: ' + resource.url);
+			console.log('Robot is requesting: ' + resource.id + ' - ' + resource.url);
 			requests.push(resource.id);
 			requestsComplete = false;
 
@@ -181,7 +183,7 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 
 		page.onResourceReceived = function(resource){
 
-			console.log('Robot is receiving: ' + resource.url + ' at ' + resource.stage);
+			console.log('Robot received: ' + resource.id + ' - ' + resource.url + ' at ' + resource.stage);
 			if (resource.stage == 'end'){
 				var index = requests.indexOf(resource.id);
 				if (index != -1) {
@@ -250,9 +252,6 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 
 				};
 
-				outputData('Success', '', '', 200);
-
-
 				// var checkResourceRequests = function(){
 					
 				// 	if (requestsComplete){
@@ -265,19 +264,24 @@ var service = server.listen(defaultConfig.ipaddress + ':' + defaultConfig.port, 
 
 				// };
 				// setting up a recursive function to check when the requestsComplete is true to start outputing data
-				// var checkResourceRequests = function(){
-				// 	setTimeout(function(){
-				// 		if(requestsComplete){
-				// 			console.log('Robot loaded all asynchronous requests');
-				// 			evaluateOutput();
-				// 		}else{
-				// 			checkResourceRequests();	
-				// 		}
-				// 	}, 500);
-				// };
+				var checkResourceRequests = function(){
+					setTimeout(function(){
+						if(requestsComplete){
+							console.log('Robot loaded all asynchronous requests');
+							evaluateOutput();
+						}else{
+							console.log('Checking the requests stack!');
+							console.log(requests.length);
+							console.log(requests[0]);
+							console.log(requests[1]);
+							console.log(requests[2]);
+							checkResourceRequests();	
+						}
+					}, 500);
+				};
 
-				// //Calling the recursive timeout func at least once
-				// checkResourceRequests();
+				//Calling the recursive timeout func at least once
+				checkResourceRequests();
 
 			}else{
 
